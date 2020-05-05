@@ -9,4 +9,4 @@ English README [here](README.md)
 # Labs
 
 * [Prerequisites](docs/es/01-prerequisites.es.md)
-* [Infraestructura de terraform con AWS](does/es/02-terraform.es.md)
+* [Infraestructura de terraform con AWS](docs/es/02-terraform.es.md)
