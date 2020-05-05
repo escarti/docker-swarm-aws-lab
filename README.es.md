@@ -5,3 +5,8 @@ El propósito de esta práctica es probar docker swarm en una infrastructura de 
 # Lenguages:
 
 English README [here](README.md)
+
+# Labs
+
+* [Prerequisites](docs/es/01-prerequisites.es.md)
+* [Infraestructura de terraform con AWS](does/es/02-terraform.es.md)
