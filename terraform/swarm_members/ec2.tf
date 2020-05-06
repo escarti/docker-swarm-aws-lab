@@ -45,6 +45,15 @@ resource "aws_security_group" "sg_ec2" {
     cidr_blocks = var.allowed_ips
   }
 
+  ingress {
+    description = "Allow all traffic from self"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
+  }
+
+
   egress {
     description = "Allow all ports and protocols to go out"
     from_port   = 0

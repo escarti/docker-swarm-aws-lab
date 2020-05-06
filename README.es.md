@@ -10,3 +10,4 @@ English README [here](README.md)
 
 * [Prerequisites](docs/es/01-prerequisites.es.md)
 * [Infraestructura de terraform con AWS](docs/es/02-terraform.es.md)
+* [Configurar el SWARM](03-configure-swarm.es.md)
