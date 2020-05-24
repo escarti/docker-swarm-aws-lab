@@ -73,4 +73,5 @@ Ahora podemos visitar la DNS de nuestro balanceador de carga y deberíamos poder
 ## EJERCICIOS
 
 1. Escribir un script que tenga como entrada el archivo /terraform/swarm_members/swarmec2.tfvars y que se conecte automáticamente a cada una de las instancia y ejecute los comandos necesarios.
+2. Modificar los provisioners de terraform para que hagan lo mismo que en el punto 1.
 

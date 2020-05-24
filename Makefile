@@ -36,3 +36,11 @@ deploy_all:
 destroy_all:
 	cd terraform/swarm_members; terraform destroy -auto-approve -var-file ../network/network.tfvars; rm swarmec2.tfvars;\
 	cd ../network; terraform destroy -auto-approve; rm network.tfvars;\
+
+## Destroy swarm infrastructure
+swarm_destroy:
+	cd terraform/swarm_members; terraform destroy -auto-approve -var-file ../network/network.tfvars; rm swarmec2.tfvars;
+
+## Destroy network infrastructure
+network_destroy:
+	cd terraform/network; terraform destroy -auto-approve; rm network.tfvars;
