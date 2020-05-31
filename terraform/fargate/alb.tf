@@ -4,7 +4,7 @@
 resource "aws_security_group" "sg_public_alb" {
   vpc_id      = var.vpc_id
   description = "Security group for open to the internet"
-  name        = "${var.owner_id}-alb-sg"
+  name        = "${var.owner_id}-alb-sg-fargate"
 
   #HTTP
   ingress {
@@ -26,7 +26,7 @@ resource "aws_security_group" "sg_public_alb" {
 
 # Load balancer
 resource "aws_lb" "alb" {
-  name               = "${var.owner_id}-alb"
+  name               = "${var.owner_id}-alb-fargate"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.sg_public_alb.id]
@@ -37,10 +37,12 @@ resource "aws_lb" "alb" {
 
 # Target group
 resource "aws_lb_target_group" "ltg_port80" {
-  name     = "${var.owner_id}-ltg-port80"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name                 = "${var.owner_id}-ltg-port80-fargate"
+  port                 = 80
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  target_type          = "ip"
+  deregistration_delay = "10"
 
   health_check {
     enabled = true
@@ -57,17 +59,4 @@ resource "aws_lb_listener" "lblistener_port80" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ltg_port80.arn
   }
-}
-
-resource "aws_lb_target_group_attachment" "ltgattachment-workers" {
-  count            = length(aws_instance.worker_ec2)
-  target_group_arn = aws_lb_target_group.ltg_port80.arn
-  target_id        = aws_instance.worker_ec2[count.index].id
-  port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "ltgattachment-manager" {
-  target_group_arn = aws_lb_target_group.ltg_port80.arn
-  target_id        = aws_instance.manager_ec2.id
-  port             = 80
 }

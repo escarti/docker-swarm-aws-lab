@@ -4,6 +4,7 @@ variable "priv_subnets" {
 variable "pub_subnets" {
   type = list(string)
 }
+
 variable "vpc_id" {}
 
 variable "owner_id" {}

@@ -12,6 +12,8 @@ Para ello he preparado un repositorio con una web simple en FLASK que usaremos c
 
 El [repositorio](https://github.com/escarti/simple-flask-web) lo podéis [forkear aquí](https://github.com/escarti/simple-flask-web/fork)
 
+> Os recomiendo borrar el archivo .github/workflows/main.yaml y crear el vuestro propio para no ver los resultados
+
 ### Docker-Hub
 
 Ahora crearemos un repositorio para almacenar nuestras imágenes y le damos el nombre idéntico al fork o copia de nuestro repositorio con el código de la webapp (Esto es para minimizar el código que habremos de adaptar en los siguientes pasos). Podéis hacer click [aquí](https://hub.docker.com/repository/create)
@@ -131,7 +133,7 @@ Ejectutamos ``docker service ps webapp`` y ``docker service inspect --pretty web
 
 Si ahora visitamos la URL del balanceador de carga nos saldrá nuestra web "Hello World".
 
-## Rolling update
+### Rolling update
 
 Como hemos visto, nuestro archivo de CI/CD nos actualiza automáticamente el cluster de swarm cuando hay un cambio en master.
 
@@ -139,7 +141,7 @@ Vamos a ponerlo a prueba.
 
 Cambiemos "Hello World!" por "Hello Developers!" y no os olvidéis de adaptar los test también.
 
-## Simulación de errores
+### Simulación de errores
 
 Ahora vamos a ir apagando los workers uno a uno y ejecutando ``docker service ps webapp`` para ver como nuestro máster se las apaña.
 
@@ -166,6 +168,10 @@ qfth96ds4s23         \_ webapp.3        escarti/simple-flask-web:sha-d21ec9b   i
 no1ngmkxxdre        webapp.4            escarti/simple-flask-web:sha-d21ec9b   ip-10-0-11-48.ec2.internal   Running             Running about a minute ago                       
 w4n48k6fhcv5         \_ webapp.4        escarti/simple-flask-web:sha-d21ec9b   ip-10-0-8-209.ec2.internal   Shutdown            Running 4 minutes ago 
 ```
+
+## FIN
+
+Con esto damos por concluida la práctica sobre docker swarm. Procedemos a destruir la parte de la infraestructura de swarm ejecutando el comando ``make swarm_destroy``
 
 ## Referencias
 

@@ -1,0 +1,15 @@
+[
+    {
+      "name": "simple_flask_web",
+      "image": "${image}",
+      "cpu": ${fargate_cpu},
+      "memory": ${fargate_memory},
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": ${container_port},
+          "hostPort": ${host_port}
+        }
+      ]
+    }
+]

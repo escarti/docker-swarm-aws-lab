@@ -61,6 +61,8 @@ resource "aws_security_group" "sg_ec2" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  depends_on = [aws_security_group.sg_public_alb]
 }
 # Create manager instance and security group
 resource "aws_instance" "manager_ec2" {
@@ -123,6 +125,4 @@ resource "aws_instance" "worker_ec2" {
       host        = self.public_ip
     }
   }
-
-
 }
