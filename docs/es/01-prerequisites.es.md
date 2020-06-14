@@ -16,23 +16,6 @@ Vamos a definir la infraestructura como código con terraform y desplegarla en A
     - Otros:
     [Visitar enlace](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 
-2. Instala Ansible
-
-    - MacOS:
-        ```bash
-        brew install ansible
-        ```
-
-    - Ubuntu:
-        ``` bash
-        sudo apt update
-        sudo apt install software-properties-common
-        sudo apt-add-repository --yes --update ppa:ansible/ansible
-        sudo apt install ansible
-        ```
-    - Otros:
-    [Visitar enlace](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-
 3. Instala terraform 0.12.24. Recomiendo usar [tfswitch](https://warrensbox.github.io/terraform-switcher/) para alternar entre versiones
  
     - MacOs:
