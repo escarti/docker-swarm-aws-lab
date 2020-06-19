@@ -4,7 +4,7 @@ Ahora que ya tenemos desplegada toda la infraestructura nos conectaremos a cada 
 
 En el archivo [/terraform/swarm_members/swarmec2.tfvars](../../terraform/swarm_members/swarmec2.tfvars) encontraremos las direcciones IP públicas y si lo hemos hecho todo bien podremos conectarnos con el siguiente comando:
 
-``ssh -i ~/.ssh/docker-swarm-key ec2-user@EC2_PUB_IP``
+``ssh -i ~/.ssh/docker-swarm-key ec2-user@EC2_PUB_IP`` usando la que aparece como `manager` en el archivo swarmec2.tfvars.
 
 ## Iniciar el SWARM
 
