@@ -12,13 +12,35 @@ Para ello he preparado un repositorio con una web simple en FLASK que usaremos c
 
 El [repositorio](https://github.com/escarti/simple-flask-web) lo podéis [forkear aquí](https://github.com/escarti/simple-flask-web/fork)
 
+
 > Os recomiendo borrar el archivo .github/workflows/main.yaml y crear el vuestro propio para no ver los resultados
 
 ### Docker-Hub
 
 Ahora crearemos un repositorio para almacenar nuestras imágenes y le damos el nombre idéntico al fork o copia de nuestro repositorio con el código de la webapp (Esto es para minimizar el código que habremos de adaptar en los siguientes pasos). Podéis hacer click [aquí](https://hub.docker.com/repository/create)
 
+### Secrets en GitHub
+
+Una vez tengamos el repositorio en DockerHub donde vamos a guardar las imágenes procedemos a introducir los SECRETS que vamos a necesitar en GitHub
+
+Para ello debermos ir al repo dónde hemos hecho el fork de la aplicación `simple-flask-web` y en la pestaña Settings -> Secrets añadir las siguientes variables:
+
+DOCKER_PASSWORD: Password de dockerhub
+DOCKER_REPO: Repo de dockerhub
+DOCKER_USERNAME: Username de dockerhub
+HOST: IP pública de nuestra máquina master del swarm
+PRIVATE_KEY: Clave privada para conectarnos por SSH a nuestra máquina que podéis optener con el comando: `cat ~/.ssh/docker-swarm-key`
+
+Para ahorrarnos tener que tocar el código manualmente en el futuro, vamos a introducir una variable de despligue con la que identificaremos si queremos desplegar en fargate o en swarm.
+
+Nos vamos a www.github.com y en el fork de nuestro repo en Settings > Secrets > Add Secret añadimos:
+
+``DEPLOY_MODE`` con el contenido ``swarm``
+
+DEPLOY_MODE: swarm
+
 ## GitAction
+
 
 Una vez clonado nuestro vamos al archivo .github/workflows/main.yaml donde podremos ver nuestro archivo de CI/CD
 
@@ -56,8 +78,14 @@ El job consta de varios pasos:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     
-    - name: Set env
-      run: echo ::set-env name=CURR_TAG::sha-$(echo $GITHUB_SHA | cut -c 1-7)
+    - name: Set env TAG
+      run: echo "CURR_TAG=sha-$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
+
+    - name: Set env DEPLOY_MODE
+      run: echo "DEPLOY_MODE=${{ secrets.DEPLOY_MODE }}" >> $GITHUB_ENV
+    
+    - name: Set env IMAGE_NAME
+      run: echo "IMAGE_NAME=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 ```
 
 2. Haciendo uso de la potencia de GitHub Actions de poder compartir código de CI/CD al tratarse de meros archivos, usamos el [código que proporciona el propio docker](https://github.com/docker/build-push-action) para construir y tagear nuestra imagen. *IMPORTANTE* observar que en este paso tenemos puesto ``push: false`` para no subir nuestra imagen puesto que todavía no está testeada.
@@ -97,20 +125,19 @@ El job consta de varios pasos:
 
 ```
     - name: Deploy new image on docker-swarm
-      if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' && env.DEPLOY_MODE == 'swarm' }}
       uses: fifsky/ssh-action@master
       with:
         command: |
-          docker service update --image ${{ github.repository  }}:${{ env.CURR_TAG }} webapp
+          docker service update --image ${{ secrets.DOCKER_REPO  }}:${{ env.CURR_TAG }} webapp
         host: ${{ secrets.HOST }}
         user: ec2-user
         key: ${{ secrets.PRIVATE_KEY}}
 ```
 
-## Docker Swarm
+## Activar GitHub Actions
 
-Como véis, vuestro GitHub Actions workflow estará fallando dado que no habéis puesto los secrets correspondientes.
-
+> IMPORTANTE:
 Debermos ir al repo y en la pestaña Settings -> Secrets añadir las siguientes variables:
 
 DOCKER_PASSWORD: Password de dockerhub
@@ -118,10 +145,23 @@ DOCKER_REPO: Repo de dockerhub
 DOCKER_USERNAME: Username de dockerhub
 HOST: IP pública de nuestra máquina master del swarm
 PRIVATE_KEY: Clave privada para conectarnos por SSH a nuestra máquina
+DEPLOY_MODE: swarm
 
-Una vez hecho esto, hacemos un commit a master en nuestro repo de simple-flask-web para que se suba la imagen de Docker. Aseguraos de que los test pasan ;).
+Ahora deberemos activar las github Action.
 
-> El último paso fallará puesto que no hemos iniciado aún nuestro servicio en docker-swarm
+1. Vamos a la pestaña Actions
+2. Enable Workflows
+3. New workflow
+4. Set a workflow yourself
+5. Renombramos main.yml a "myflow.yml"
+6. Start commit
+7. Commit a la rama master -> "Commit new file"
+
+Una vez hecho esto se lanzará nuestra pipeline de CI/CD pero veremos que da error puesto que 
+
+``Error: No such service: webapp``
+
+## Docker Swarm
 
 Nos volvemos a conectar a la máquina maestra y lanzamos un servicio con 4 réplicas de nuestra simple-flask-app
 
@@ -171,7 +211,7 @@ w4n48k6fhcv5         \_ webapp.4        escarti/simple-flask-web:sha-d21ec9b   i
 
 ## FIN
 
-Con esto damos por concluida la práctica sobre docker swarm. Procedemos a destruir la parte de la infraestructura de swarm ejecutando el comando ``make swarm_destroy``
+Con esto damos por concluida la práctica sobre docker swarm.
 
 ## Referencias
 

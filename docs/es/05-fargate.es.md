@@ -2,21 +2,20 @@
 
 Ahora vamos a desplegar un clúster de Fargate y usar GitAction para hacer CD
 
-## Destruir
-
-En primer lugar destruimos la infraestructura de Docker Swarm ejectutando ``make swarm_destroy``
+## Infraestructura
 
 ## Crear el clúster y la tarea con Terraform
 
+En primer lugar hemos de desplegar el clúster de fargate y destruir la infraestructura de swarm. Para eso simplemente ponemos la variable `swarm_mode  = false` y en el directorio de terraform ejecutamos `terraform apply`
+
 ### 1. Ruta a la imagen de docker-hub
 
-En primer lugar podéis usar el archivo ``terraform/fargate/terraform.tfvars.example`` y generar un archivo tfvars propio mediante ``cp terraform.tfvars.example terraform.tfvars``
-
-En ese archivo podréis configurar la ruta a la imagen de vuestro fork del repo de simple-flask-web. Sustituid ``"escarti/simple-flask-web:latest"`` por vuestra ruta de docker-hub.
+Ahora podéis usar en el archivo tfvars que ya teníamos e introducimos en la variable `image         = "MY_IMAGE_DOCKER_HUB_REPO"` vuestra ruta de docker-hub de la imagen.
+Además ponemos la variable `fargate_mode  = true` para que se construya el módulo de fargate.
 
 ### 2. Crear el clúster
 
-Ahora ejecutamos ``make deploy_fargate`` para crear nuestro clúster y lanzar las tareas y el servicio.
+En el directorio de terraform ejecutamos `terraform apply`.
 
 Una vez terminado tanto en el archivo ``fargate.tfvars`` como en los outputs encontraréis la DNS pública del balanceador de carga. Por ejemplo:
 
@@ -24,27 +23,7 @@ Una vez terminado tanto en el archivo ``fargate.tfvars`` como en los outputs enc
 
 ## Adaptar GitHub Actions
 
-Ahora que hemos destruido nuestro clúster de Swarm deberemos adaptar nuestro workflow para que no intente desplegar, puesto que dará error.
-
-Partimos de este paso:
-
-```
-    - name: Deploy new image on docker-swarm
-      if: ${{ github.ref == 'refs/heads/master' }}
-      uses: fifsky/ssh-action@master
-      with:
-        command: |
-          docker service update --image ${{ github.repository  }}:${{ env.CURR_TAG }} webapp
-        host: ${{ secrets.HOST }}
-        user: ec2-user
-        key: ${{ secrets.PRIVATE_KEY}}
-```
-
-Para ahorrarnos tener que tocar el código manualmente en el futuro, vamos a introducir una variable de despligue con la que identificaremos si queremos desplegar en fargate o en swarm.
-
-Nos vamos a www.github.com y en el fork de nuestro repo en Settings > Secrets > Add Secret añadimos:
-
-``DEPLOY_MODE`` con el contenido ``fargate``
+Ahora que hemos destruido nuestro clúster de Swarm deberemos adaptar nuestro workflow para añadir los pasos a seguir para desplegar en Fargate.
 
 Dado que las condiciones "if" no aceptan secrets en GitHub actions debemos hacer un workaround y usar variables de entorno. El step modificado queda así:
 
@@ -76,10 +55,10 @@ Dado que los jobs pueden correr en diferentes máquinas deberemos volver a decla
     steps:
 
     - name: Set env TAG
-      run: echo ::set-env name=CURR_TAG::sha-$(echo $GITHUB_SHA | cut -c 1-7)
+      run: echo "CURR_TAG=sha-$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
 
     - name: Set env DEPLOY_MODE
-      run: echo ::set-env name=DEPLOY_MODE::${{ secrets.DEPLOY_MODE }}
+      run: echo "DEPLOY_MODE=${{ secrets.DEPLOY_MODE }}" >> $GITHUB_ENV
 ```    
 
 Todos lo pasos tendrán un condicional para que sólo se ejecuten en la rama máster y en caso de que tenamos el modo de despliegue en 'fargate'
@@ -107,7 +86,6 @@ Como véis deberemos añadir los correspondientes secrets en el repo bajo Settin
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
 - AWS_REGION
-
 
 Idealmente deberíamos tener nuestra "taks-definition" bajo control de versiones pero en este caso nos limitamos a bajar la última versión del clúster y adaptarla
 
@@ -145,6 +123,15 @@ Acto seguido desplegamos la imágen:
         cluster: ${{ env.ONWER_ID }}-ecs-cluster
         wait-for-service-stability: true
 ```
+
+Como véis aquí necesitamos saber el owner id así que incluimos:
+
+```
+env:
+  ONWER_ID: $VUESTRO_OWNER_ID
+```
+
+justo después `on` y antes de `jobs`
 
 ### Test final
 

@@ -1,7 +1,3 @@
-terraform {
-  required_version = "0.12.24"
-}
-
 locals {
   num_subnets = length(var.priv_subnets)
 }
@@ -64,10 +60,31 @@ resource "aws_security_group" "sg_ec2" {
 
   depends_on = [aws_security_group.sg_public_alb]
 }
+
+data "aws_ami" "linux_ami" {
+  owners      = ["amazon"]
+  most_recent = true
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 # Create manager instance and security group
 resource "aws_instance" "manager_ec2" {
   instance_type = var.instance_type
-  ami           = var.ami
+  ami           = data.aws_ami.linux_ami.id
 
   tags = {
     Name = "${var.owner_id}-manager-ec2"
@@ -96,11 +113,12 @@ resource "aws_instance" "manager_ec2" {
 
 # Create worker ec2 instances
 
+
 resource "aws_instance" "worker_ec2" {
   count = local.num_subnets
 
   instance_type = var.instance_type
-  ami           = var.ami
+  ami           = data.aws_ami.linux_ami.id
 
   tags = {
     Name = "${var.owner_id}-worker-ec2"

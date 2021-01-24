@@ -1,7 +1,3 @@
-terraform {
-  required_version = "0.12.24"
-}
-
 # Internet gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my_vpc.id

@@ -1,7 +1,3 @@
-terraform {
-  required_version = "0.12.24"
-}
-
 resource "aws_vpc" "my_vpc" {
   cidr_block           = var.cidr_block
   enable_dns_support   = true

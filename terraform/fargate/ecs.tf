@@ -51,7 +51,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 }
 
 data "template_file" "simple_flask_definition" {
-  template = file("./templates/simple_flask_web.json")
+  template = file("${path.module}/templates/simple_flask_web.json")
 
   vars = {
     image          = var.image

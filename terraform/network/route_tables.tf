@@ -1,6 +1,3 @@
-terraform {
-  required_version = "0.12.24"
-}
 
 # Private routing-tables
 resource "aws_route_table" "routetable_private" {

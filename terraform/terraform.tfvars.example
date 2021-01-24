@@ -1,0 +1,9 @@
+owner_id      = "superman"
+cidr_block    = "172.0.0.0/21"
+aws_region    = "us-west-1"
+aws_profile   = "docker-swarm-aws"
+key_path      = "~/.ssh/docker-swarm-key"
+allowed_ips   = ["0.0.0.0/0", ]
+image         = "MY_IMAGE_DOCKER_HUB_REPO"
+swarm_mode    = true
+fargate_mode  = false

@@ -2,7 +2,7 @@
 
 Ahora que ya tenemos desplegada toda la infraestructura nos conectaremos a cada una de las instancias para configurar nuestros SWARM
 
-En el archivo [/terraform/swarm_members/swarmec2.tfvars](../../terraform/swarm_members/swarmec2.tfvars) encontraremos las direcciones IP públicas y si lo hemos hecho todo bien podremos conectarnos con el siguiente comando:
+En el archivo [/terraform/swarmec2.tfvars](../../terraform/swarmec2.tfvars) encontraremos las direcciones IP públicas y si lo hemos hecho todo bien podremos conectarnos con el siguiente comando:
 
 ``ssh -i ~/.ssh/docker-swarm-key ec2-user@EC2_PUB_IP`` usando la que aparece como `manager` en el archivo swarmec2.tfvars.
 
@@ -45,12 +45,12 @@ Si todo ha ido bien deberíamos ver todas las máquinas unidas al swarm:
 
 ```bash
 ec2-user@ip-10-0-6-24 ~]$ sudo docker node ls
-ID                            HOSTNAME                     STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
-kp06yf7lxqi63oltcvkq37g0n *   ip-10-0-6-24.ec2.internal    Ready               Active              Leader              19.03.6-ce
-1m3rrv0qgrpoxx204cc2mihnj     ip-10-0-6-70.ec2.internal    Ready               Active                                  19.03.6-ce
-4u5hkp93i7jrfj6bxote6yytz     ip-10-0-8-173.ec2.internal   Ready               Active                                  19.03.6-ce
-o1104qg0pmp3hqxi5ljvi1h9c     ip-10-0-11-10.ec2.internal   Ready               Active                                  19.03.6-ce
+ID                            HOSTNAME                                   STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+k2dncvfc2fjgarv870itl1s1i *   ip-172-0-0-39.us-west-1.compute.internal   Ready               Active              Leader              19.03.13-ce
+4guzfqnhxp1irvk2vekmlws3q     ip-172-0-0-42.us-west-1.compute.internal   Ready               Active                                  19.03.13-ce
+tzcnbnugs3mppoaz3fkovvx4f     ip-172-0-0-59.us-west-1.compute.internal   Ready               Active                                  19.03.13-ce
 ```
+
 ## Smoke test
 
 Ahora haremos un pequeño smoke-test y desplegaremos un contenedor de nginx y veremos si podemos acceder. 
@@ -70,8 +70,9 @@ sjmylyn9ajlp        web.4               nginx:latest        ip-10-0-11-10.ec2.in
 Ahora podemos visitar la DNS de nuestro balanceador de carga y deberíamos poder ver los contenedores de nginx vivos :)
 > La DNS la encontraréis en [/terraform/swarm_members/swarmec2.tfvars](../../terraform/swarm_members/swarmec2.tfvars)
 
+Para concluir ejecutamos `docker service rm web` para eliminar el servicio
+
 ## EJERCICIOS
 
 1. Escribir un script que tenga como entrada el archivo /terraform/swarm_members/swarmec2.tfvars y que se conecte automáticamente a cada una de las instancia y ejecute los comandos necesarios.
 2. Modificar los provisioners de terraform para que hagan lo mismo que en el punto 1.
-

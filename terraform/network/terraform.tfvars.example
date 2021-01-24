@@ -1,4 +1,0 @@
-owner_id = "superman"
-cidr_block = "172.0.0.0/16"
-aws_region = "us-west-1"
-aws_profile = "docker-swarm-aws"

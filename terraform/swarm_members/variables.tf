@@ -13,11 +13,6 @@ variable "aws_region" {}
 
 variable "aws_profile" {}
 
-variable "ami" {
-  # default for us-east-1
-  default = "ami-0323c3dd2da7fb37d"
-}
-
 variable "instance_type" {
   default = "t2.micro"
 }

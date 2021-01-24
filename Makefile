@@ -27,33 +27,11 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
-## Deploy SWARM infrastructure
-deploy_swarm:
-	cd terraform/network; terraform apply -auto-approve;\
-	cd ../swarm_members; terraform apply -auto-approve -var-file ../network/network.tfvars
-
-## Deploy FARGATE infrastructure
-deploy_fargate:
-	cd terraform/network; terraform init; terraform apply -auto-approve;\
-	cd ../fargate; terraform init; terraform apply -auto-approve -var-file ../network/network.tfvars
-
-## Destroy all infrastructure
-destroy_all:
-	cd terraform/swarm_members; terraform init; terraform destroy -auto-approve -var-file ../network/network.tfvars; rm swarmec2.tfvars; rm *.tfstate; rm *.backup;\
-	cd ../fargate; terraform init; terraform destroy -auto-approve -var-file ../network/network.tfvars; rm fargate.tfvars; rm *.tfstate; rm *.backup;\
-	cd ../network; terraform init; terraform destroy -auto-approve; rm network.tfvars; rm *.tfstate; rm *.backup;\
-
-## Destroy swarm infrastructure
-swarm_destroy:
-	cd terraform/swarm_members; terraform destroy -auto-approve -var-file ../network/network.tfvars; rm swarmec2.tfvars;
-
-## Destroy network infrastructure
-network_destroy:
-	cd terraform/network; terraform destroy -auto-approve; rm network.tfvars;
 
 ## Format all terraform files
 fmt_all:
 	cd terraform/network; terraform fmt;\
 	cd ../fargate; terraform fmt;\
 	cd ../swarm_members; terraform fmt;\
+	cd ..; terraform fmt;\
 

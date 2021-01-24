@@ -1,7 +1,3 @@
-terraform {
-  required_version = "0.12.24"
-}
-
 locals {
   num_subnets = min(length(data.aws_availability_zones.available.names), 3)
 }
