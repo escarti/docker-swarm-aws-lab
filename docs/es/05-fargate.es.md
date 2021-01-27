@@ -93,7 +93,7 @@ Idealmente deberíamos tener nuestra "taks-definition" bajo control de versiones
     - name: Download task definition
       if: ${{ github.ref == 'refs/heads/master' && env.DEPLOY_MODE == 'fargate' }}
       run: |
-        aws ecs describe-task-definition --task-definition ${{ env.ONWER_ID }}-sfw-task --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition ${{ env.ONWER_ID }}-sfw-task-${{ env.SUFFIX }} --query taskDefinition > task-definition.json
 ```
 
 > EJERCICIO: Crear un repo que contenga exclusivamente nuestro task-definition.json y adaptar GitHub actions para que haga commit/push en ese repo cada vez que despleguemos un nuevo task-definition.json en nuestro clúster.
@@ -119,8 +119,8 @@ Acto seguido desplegamos la imágen:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ONWER_ID }}-sfw-service
-        cluster: ${{ env.ONWER_ID }}-ecs-cluster
+        service: ${{ env.ONWER_ID }}-sfw-service-${{ env.SUFFIX }}
+        cluster: ${{ env.ONWER_ID }}-ecs-cluster-${{ env.SUFFIX }}
         wait-for-service-stability: true
 ```
 
@@ -129,6 +129,7 @@ Como véis aquí necesitamos saber el owner id así que incluimos:
 ```
 env:
   ONWER_ID: $VUESTRO_OWNER_ID
+  SUFFIX: $VUESTRO_FARGATE_SUFFIX
 ```
 
 justo después `on` y antes de `jobs`

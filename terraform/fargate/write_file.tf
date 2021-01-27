@@ -8,6 +8,7 @@ resource "null_resource" "write_file" {
     command = <<EOD
 cat <<EOF > fargate.tfvars
 alb_dns = "${aws_lb.alb.dns_name}"
+fargate_suffix = "${random_string.suffix.result}"
 EOF
 EOD
   }

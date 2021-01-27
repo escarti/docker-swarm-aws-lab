@@ -1,6 +1,10 @@
 ## PUBLIC LOAD BALANCER 
 
 # Open to the internet security group for the public load balancer
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
 resource "aws_security_group" "sg_public_alb" {
   vpc_id      = var.vpc_id
   description = "Security group for open to the internet"
@@ -26,7 +30,7 @@ resource "aws_security_group" "sg_public_alb" {
 
 # Load balancer
 resource "aws_lb" "alb" {
-  name               = "${var.owner_id}-alb"
+  name               = "${var.owner_id}-alb-${random_string.suffix.result}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.sg_public_alb.id]
@@ -37,7 +41,7 @@ resource "aws_lb" "alb" {
 
 # Target group
 resource "aws_lb_target_group" "ltg_port80" {
-  name     = "${var.owner_id}-ltg-port80"
+  name     = "${var.owner_id}-ltg-port80-${random_string.suffix.result}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id

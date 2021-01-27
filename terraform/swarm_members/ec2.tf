@@ -5,7 +5,7 @@ locals {
 # Key to connect to instances
 
 resource "aws_key_pair" "keypair_auth" {
-  key_name   = var.key_name
+  key_name   = "${var.key_name}-${random_string.suffix.result}"
   public_key = file("${var.key_path}.pub")
 }
 

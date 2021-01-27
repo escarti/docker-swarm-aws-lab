@@ -1,10 +1,13 @@
 ## PUBLIC LOAD BALANCER 
-
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
 # Open to the internet security group for the public load balancer
 resource "aws_security_group" "sg_public_alb" {
   vpc_id      = var.vpc_id
   description = "Security group for open to the internet"
-  name        = "${var.owner_id}-alb-sg-fargate"
+  name        = "${var.owner_id}-alb-sg-fargate-${random_string.suffix.result}"
 
   #HTTP
   ingress {
@@ -37,7 +40,7 @@ resource "aws_lb" "alb" {
 
 # Target group
 resource "aws_lb_target_group" "ltg_port80" {
-  name                 = "${var.owner_id}-ltg-port80-fargate"
+  name                 = "${var.owner_id}-ltg-port80-fargate-${random_string.suffix.result}"
   port                 = 80
   protocol             = "HTTP"
   vpc_id               = var.vpc_id

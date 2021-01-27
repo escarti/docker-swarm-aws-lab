@@ -47,7 +47,7 @@ resource "aws_security_group" "sg_ecs" {
 }
 
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "${var.owner_id}-ecs-cluster"
+  name = "${var.owner_id}-ecs-cluster-${random_string.suffix.result}"
 }
 
 data "template_file" "simple_flask_definition" {
@@ -63,7 +63,7 @@ data "template_file" "simple_flask_definition" {
 }
 
 resource "aws_ecs_task_definition" "simple_flask_web_task" {
-  family                   = "${var.owner_id}-sfw-task"
+  family                   = "${var.owner_id}-sfw-task-${random_string.suffix.result}"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   container_definitions    = data.template_file.simple_flask_definition.rendered
@@ -72,7 +72,7 @@ resource "aws_ecs_task_definition" "simple_flask_web_task" {
 }
 
 resource "aws_ecs_service" "simple_flask_web_service" {
-  name            = "${var.owner_id}-sfw-service"
+  name            = "${var.owner_id}-sfw-service-${random_string.suffix.result}"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.simple_flask_web_task.arn
   desired_count   = 3
