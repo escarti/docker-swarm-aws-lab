@@ -25,6 +25,16 @@ Una vez terminado tanto en el archivo ``fargate.tfvars`` como en los outputs enc
 
 Ahora que hemos destruido nuestro clúster de Swarm deberemos adaptar nuestro workflow para añadir los pasos a seguir para desplegar en Fargate.
 
+Vamos a necesitar estar variables de entorno de nuestra infraestructura. El suffic lo econtraréis en el archivo autogenerado fargate.tfvars
+
+```
+env:
+  ONWER_ID: $VUESTRO_OWNER_ID
+  SUFFIX: $VUESTRO_FARGATE_SUFFIX
+```
+
+justo después `on` y antes de `jobs`
+
 Dado que las condiciones "if" no aceptan secrets en GitHub actions debemos hacer un workaround y usar variables de entorno. El step modificado queda así:
 
 ```
@@ -124,15 +134,7 @@ Acto seguido desplegamos la imágen:
         wait-for-service-stability: true
 ```
 
-Como véis aquí necesitamos saber el owner id así que incluimos:
 
-```
-env:
-  ONWER_ID: $VUESTRO_OWNER_ID
-  SUFFIX: $VUESTRO_FARGATE_SUFFIX
-```
-
-justo después `on` y antes de `jobs`
 
 ### Test final
 

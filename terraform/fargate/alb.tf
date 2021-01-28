@@ -40,7 +40,7 @@ resource "aws_lb" "alb" {
 
 # Target group
 resource "aws_lb_target_group" "ltg_port80" {
-  name                 = "${var.owner_id}-ltg-port80-fargate-${random_string.suffix.result}"
+  name                 = "${var.owner_id}-ltg-p80f-${random_string.suffix.result}"
   port                 = 80
   protocol             = "HTTP"
   vpc_id               = var.vpc_id
