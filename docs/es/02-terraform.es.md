@@ -28,7 +28,7 @@ En primer lugar necesitaremos una clave ssh para conectarnos a las instancias. L
 
     ``cp terraform.tfvars.example terraform.tfvars``
 
-3. Ahora editaremos la información con el contenido de las variables que queramos. Es especialmente importante que el ``aws_profile`` coincida con el vuestro. También es muy recomendable que la variable ``owner_id`` tenga un nombre único para poder identificar vuestros recursos.  (p.ej "batman" o "superman")
+3. Ahora editaremos la información con el contenido de las variables que queramos. Es especialmente importante que el ``aws_profile`` coincida con el vuestro. También es muy recomendable que la variable ``owner_id`` tenga un nombre único para poder identificar vuestros recursos. ATENCIÓN: debe ser de mas 8 chars.!!!!!  (p.ej "batman" o "superman")
 
     > Si no habéis configurado el perfíl de AWS, ahora es el momento 
         ``aws configure --profile=docker-swarm-aws``
